@@ -24,7 +24,7 @@ dependencies:
 - hspec
 - record-dot-preprocessor
 - record-hasfield
-- linearEqSolver
+- mfsolve
 
 library:
   source-dirs: src
