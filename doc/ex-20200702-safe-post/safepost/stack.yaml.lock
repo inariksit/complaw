@@ -5,12 +5,16 @@
 
 packages:
 - completed:
-    hackage: g2q-0.1.0.0@sha256:f1008771eb7f258d37a30b932faef8df8463779a9accffcac0024d86b326e533,1189
+    name: base
+    version: 4.9.1.0
+    git: https://github.com/AntonXue/base-4.9.1.0
     pantry-tree:
-      size: 306
-      sha256: e647eb3ef730fab8b7e350dddeb7f14425e1f3aa6c51ba76b5cb903af61ce3ef
+      size: 15949
+      sha256: f256016a11e374f3098cfef86083fda095ebfd90f044866c10d3e6cdd9e884ad
+    commit: 181659eb6605f52a926ba4df0399e63ece3b4c61
   original:
-    hackage: g2q-0.1.0.0@sha256:f1008771eb7f258d37a30b932faef8df8463779a9accffcac0024d86b326e533,1189
+    git: https://github.com/AntonXue/base-4.9.1.0
+    commit: 181659eb6605f52a926ba4df0399e63ece3b4c61
 - completed:
     hackage: g2-0.1.0.1@sha256:af885c7b0f36bde2b1712fee7c809cf579f7081c6dce77a918ade85bd5effaf4,9939
     pantry-tree:
@@ -18,55 +22,6 @@ packages:
       sha256: 26b564465458f21079b997d4a22ad9beea25e12930ef7a29751503c50797355f
   original:
     hackage: g2-0.1.0.1@sha256:af885c7b0f36bde2b1712fee7c809cf579f7081c6dce77a918ade85bd5effaf4,9939
-- completed:
-    hackage: liquid-fixpoint-0.8.0.2@sha256:dc149e3967e249c9b66a56063633b15ff07c1b4add569eb0a7b4ac4864477804,7267
-    pantry-tree:
-      size: 56193
-      sha256: 4c1c7720e0b1f8ffb763364d2654e712b7c0810a851f976de7799e751e5e0795
-  original:
-    hackage: liquid-fixpoint-0.8.0.2@sha256:dc149e3967e249c9b66a56063633b15ff07c1b4add569eb0a7b4ac4864477804,7267
-- completed:
-    hackage: liquidhaskell-0.8.2.2@sha256:c98a2388fad5f7e8b9e2df0d5dd2b8f7cefda3f95e28175fb737dfb25c16e1c9,14191
-    pantry-tree:
-      size: 65528
-      sha256: 7e75bcf615fcd5c83224856aaac48dd9c9bea2e4d9e6263ac7a1adeb60892275
-  original:
-    hackage: liquidhaskell-0.8.2.2@sha256:c98a2388fad5f7e8b9e2df0d5dd2b8f7cefda3f95e28175fb737dfb25c16e1c9,14191
-- completed:
-    hackage: located-base-0.1.1.1@sha256:7c6395f2b6fbf2d5f76c3514f774423838c0ea94e1c6a5530dd3c94b30c9d1c8,1904
-    pantry-tree:
-      size: 534
-      sha256: 9d7b96ce785b464253dcf0ac2d8eb0be4cae6b96ed3960d66b81c373b540ed3f
-  original:
-    hackage: located-base-0.1.1.1@sha256:7c6395f2b6fbf2d5f76c3514f774423838c0ea94e1c6a5530dd3c94b30c9d1c8,1904
-- completed:
-    hackage: text-format-0.3.2@sha256:2a3fc17cf87120fcfdbca62a0da59759755549285841cdc1483081c35fb3d115,1814
-    pantry-tree:
-      size: 1029
-      sha256: 2db26ddb77184186e0d5b2b020bdfbeb044c168024767b1fa3691682ca618896
-  original:
-    hackage: text-format-0.3.2@sha256:2a3fc17cf87120fcfdbca62a0da59759755549285841cdc1483081c35fb3d115,1814
-- completed:
-    hackage: mfsolve-0.3.2.0@sha256:19ce2822b8d3cf906e983a237341698349dcef49d873b1b03d141276b4b0e8dc,1155
-    pantry-tree:
-      size: 262
-      sha256: 194ef83e8a4008c156a76b87fcda74dd3ea5ca3274d3a01b63ca62bd5d8228a2
-  original:
-    hackage: mfsolve-0.3.2.0@sha256:19ce2822b8d3cf906e983a237341698349dcef49d873b1b03d141276b4b0e8dc,1155
-- completed:
-    hackage: record-dot-preprocessor-0.2.5@sha256:d1ce85ac1f1ce2d108a82032b97734c57f96078bc824527841306ff08e991a68,2401
-    pantry-tree:
-      size: 945
-      sha256: 9f07eb837282755c2a823c65fbc0da1c58084c1297129fa99e7c951e21645d42
-  original:
-    hackage: record-dot-preprocessor-0.2.5@sha256:d1ce85ac1f1ce2d108a82032b97734c57f96078bc824527841306ff08e991a68,2401
-- completed:
-    hackage: record-hasfield-1.0@sha256:c7f39b8d3f9299c7361e115e97f3474274b3487233cb155c58eb0bec7625afcb,1477
-    pantry-tree:
-      size: 441
-      sha256: dafde98d4d1c77fd3507e7c0602c888cd79531bc7f0fe0c74b6ca27e34585f55
-  original:
-    hackage: record-hasfield-1.0@sha256:c7f39b8d3f9299c7361e115e97f3474274b3487233cb155c58eb0bec7625afcb,1477
 snapshots:
 - completed:
     size: 527836
