@@ -660,9 +660,13 @@ pps - 1.5e7/(1.1664705e7 + 0.1*tp) = 0
 
 
 
-*** Constraints: Basic Prolog / CLP(FD) Implementation
+*** Constraints: Basic Prolog / CLP() Implementation
 
-In this section we use Prolog and CLP(FD) to solve the example problems. We cut to the chase: gone are the types and helper functions. We set up the problem and solve it in a very few lines of code.
+In this section we use Prolog and CLP(R) to solve the example problems. We cut to the chase: gone are the types and helper functions. We set up the problem and solve it in a very few lines of code.
+
+Unfortunately this approach doesn't work because the rounding errors introduce a large enough gap that the solution doesn't solve.
+
+We know that the problem is non-linear, and so the linear solvers aren't suitable. The Math.MFSolve may work and is able to try to minimize the gap. We should try the clp(q) which does it with rationals and may end up with no gap in the results.
 
 #+begin_src prolog :noweb-ref lineq
 
@@ -799,8 +803,26 @@ The conversion dilution is the sum of all the individual dilutions.
 
 *** Curry
 
-In this section we use the experimental language Curry to solve the examples.
+We tried Curry. It didn't work so good.
 
+#+begin_src curry
+conversion eqr
+  | sPre == i2f( commonPre eqr + optionsPreOutstanding eqr + optionsPrePromised eqr + optionsPreFree eqr )
+  & valPre == valuationPre eqr
+  & cc    =:= sPre + csall
+  & csall =:= (dilutionDueTo valPre safe_a * cc + dilutionDueTo valPre safe_b * cc)
+  & pps   =:= valuationPre eqr / (cc + onf)
+  & onf   =:= optionsPost eqr * tp - i2f(optionsPreFree eqr)
+  & tp    =:= cc + aii + onf
+  & aii   =:= allInvestorMoney eqr / pps
+  = [ "totalPost = " ++ show tp ]
+  where sPre, valPre, cc, pps, onf, tp, aii, csall free
+        convShares safe = dilutionDueTo (valuationPre eqr) safe * cc
+#+end_src
+
+*** Let's try Z3 from Haskell.
+
+https://github.com/IagoAbal/haskell-z3
 
 ** Natural Language Generation
 
