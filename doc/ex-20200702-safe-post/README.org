@@ -1,4 +1,4 @@
-+TITLE: Learning Exercise: Post-Money SAFE
+(+TITLE: Learning Exercise: Post-Money SAFE
 
 * Background
 
@@ -92,8 +92,8 @@ To be able to break out the 5% and the 10%, we need to deal with each SAFE on it
 
 #+begin_src haskell :noweb-ref test-1
   describe "dilutionDueTo" $ do
-    it "should be  5% for investor A" $ dilutionDueTo (series_a.valuationPre) safe_a `shouldBe` 0.05
-    it "should be 10% for investor B" $ dilutionDueTo (series_a.valuationPre) safe_b `shouldBe` 0.10
+    it "should be  5% for investor A" $ dilutionDueTo (valuationPre series_a) safe_a `shouldBe` 0.05
+    it "should be 10% for investor B" $ dilutionDueTo (valuationPre series_a) safe_b `shouldBe` 0.10
 #+end_src
 
 I want ~dilutionDueTo~ to handle the full complexity of an individual SAFE's conversion, handling each of the four variants (cap/discount, no-cap/no-discount) correctly under different valuation scenarios in the Equity Financing.
@@ -122,7 +122,7 @@ Each SAFE converts at a certain /effective valuation/, which is based on, but us
 It all depends on which of the four variants the SAFE belongs to. We'll set up a ~case~ statement, aka a ~switch~ statement, to handle the four possibilities:
 
 #+begin_src haskell :noweb-ref basicimplementation :noexpand
-       let effectiveValuation = case (safe.discount, safe.val_cap) of
+       let effectiveValuation = case (discount safe, val_cap safe) of
 #+end_src
 
 If the SAFE is no-discount, no-cap, then the effective valuation is just the Series A pre-money valuation.
@@ -152,20 +152,20 @@ If the SAFE has both cap and discount, we take whichever valuation is lower -- ~
 A couple of helper functions make the math easier: here's how we arrived at the ~cappedValuation~ used above.
 
 #+begin_src haskell :noweb-ref basicimplementation
-           cappedValuation     = min (safe.val_cap) (Just valuationPre) // valuationPre
+           cappedValuation     = min (val_cap safe) (Just valuationPre) // valuationPre
 #+end_src
 
 And here's how we arrived at the ~discountedValuation~ we used above:
 
 #+begin_src haskell :noweb-ref basicimplementation
-           discountRate        = 1 - safe.discount // 0
+           discountRate        = 1 - discount safe // 0
            discountedValuation = discountRate * valuationPre
 #+end_src
 
 With all that math worked out in advance, we are now ready to return the dilution proper. Whereas ~estimatedDilution~ above calculated it as ~money_in / val_cap~, we now realize that the ~val_cap~ denominator there was a hand-wave for the more correct ~effectiveValuation~. Now we can do it right:
 
 #+begin_src haskell :noweb-ref basicimplementation
-        in safe.money_in / effectiveValuation
+        in money_in safe / effectiveValuation
 #+end_src
 
 Observant Haskellers will say, "wait, what's ~//~?" You got me. It's syntactic sugar for ~fromMaybe~, borrowed from Perl's [[https://www.effectiveperlprogramming.com/2010/10/set-default-values-with-the-defined-or-operator/][defined-or operator]]. You can think of it as "iff the left-hand-side is undefined, then use the value on the right". It's a bit like ~||~ meaning "or", but with a twist. The difference between ~//~ and ~||~ will be appreciated by anyone who has ever been bitten by a truthiness bug, in which code that meant to test for ~undefined~ accidentally matched on a defined ~0~ value.
@@ -334,7 +334,7 @@ To arrive at that number, we had to determine the number of conversion shares: 1
 #+begin_src haskell :noweb-ref basicimplementation
 conversionSharesAll :: EquityRound -> Int
 conversionSharesAll' eqr = ceiling $ conversionDilutions eqr * (fromIntegral (sharesPre eqr) / (1 - conversionDilutions eqr))
-conversionSharesAll  eqr = sum $ conversionShares eqr <$> eqr.convertibles
+conversionSharesAll  eqr = sum $ conversionShares eqr <$> convertibles (eqr :: EquityRound)
 #+end_src
 
 The conversion shares were computed based on the conversion dilutions, which is the sum of all the dilution due to the SAFEs.
@@ -350,7 +350,7 @@ We already know it should be 15%, but let's reach that number in a bottom-up way
 #+begin_src haskell :noweb-ref basicimplementation
 conversionDilutions :: EquityRound -> Float
 conversionDilutions eqr =
-  sum $ dilutionDueTo (eqr.valuationPre) <$> (eqr.convertibles)
+  sum $ dilutionDueTo (valuationPre eqr) <$> (convertibles (eqr :: EquityRound))
 #+end_src
 
 For sure, all of the above calculations could fit into a spreadsheet. Auto-generation of a spreadsheet is consistent with the goals of the <<<Advanced Approach>>> below.
@@ -468,7 +468,7 @@ We relied on ~allInvestorMoney~, one of the known terms in the equation:
 #+begin_src haskell :noweb-ref basicimplementation
 allInvestorMoney :: EquityRound -> Money
 allInvestorMoney eqr
-  = sum $ money_in <$> eqr.incoming
+  = sum $ money_in <$> incoming eqr
 #+end_src
 
 We define the other functions in terms of the knowns:
@@ -532,8 +532,8 @@ To pass that test, let's define ~investorIssue~ to calculate the number of share
 
 #+begin_src haskell :noweb-ref basicimplementation
 investorIssue' :: EquityRound -> Security -> Int
-investorIssue' eqr investment = floor (investment.money_in / pricePerShare' eqr)
-investorIssue  eqr investment = floor (investment.money_in / pricePerShare  eqr)
+investorIssue' eqr investment = floor (money_in investment / pricePerShare' eqr)
+investorIssue  eqr investment = floor (money_in investment / pricePerShare  eqr)
 #+end_src
 
 #+begin_src haskell :noweb-ref test-1
@@ -543,8 +543,8 @@ investorIssue  eqr investment = floor (investment.money_in / pricePerShare  eqr)
 
 #+begin_src haskell :noweb-ref basicimplementation
 allInvestorIssues' :: EquityRound -> Int
-allInvestorIssues' eqr = sum $ investorIssue' eqr <$> eqr.incoming
-allInvestorIssues  eqr = sum $ investorIssue  eqr <$> eqr.incoming
+allInvestorIssues' eqr = sum $ investorIssue' eqr <$> incoming eqr
+allInvestorIssues  eqr = sum $ investorIssue  eqr <$> incoming eqr
 #+end_src
 
 What percentage of ~totalPost~ is the available option pool?
@@ -1034,7 +1034,6 @@ The following blobs of code help with the tangle/noweb auto-generation of Haskel
 
 #+begin_src haskell :noweb yes :tangle safepost/test/Spec.hs
 {-# LANGUAGE OverloadedStrings, DuplicateRecordFields, QuasiQuotes #-}
-{-# OPTIONS_GHC -F -pgmF=record-dot-preprocessor #-}
 
 <<tangleWarning>>
 
@@ -1062,7 +1061,6 @@ spec1 = do
 #+begin_src haskell :noweb yes :tangle safepost/src/SAFE/Basic.hs
 {-# LANGUAGE OverloadedStrings, DuplicateRecordFields, QuasiQuotes #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
-{-# OPTIONS_GHC -F -pgmF=record-dot-preprocessor #-}
 
 <<tangleWarning>>
 
