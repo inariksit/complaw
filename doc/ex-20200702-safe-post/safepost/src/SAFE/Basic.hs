@@ -47,16 +47,16 @@ estimatedDilution safes =
       | SAFE{money_in=money, val_cap=(Just cap)} <- safes ]
 
 dilutionDueTo :: Money -> Security -> Percentage
-dilutionDueTo valuationPre safe =
-       let effectiveValuation = case (discount safe, val_cap safe) of
+dilutionDueTo valuationPre safe = money_in safe / effectiveValuation valuationPre safe
+effectiveValuation valuationPre safe = case (discount safe, val_cap safe) of
                          (Nothing, Nothing) -> valuationPre
                          (Nothing, Just _ ) ->     cappedValuation
                          (Just _,  Nothing) ->                     discountedValuation
                          (Just _,  Just _ ) -> min cappedValuation discountedValuation
+    where
            cappedValuation     = min (val_cap safe) (Just valuationPre) // valuationPre
            discountRate        = 1 - discount safe // 0
            discountedValuation = discountRate * valuationPre
-        in money_in safe / effectiveValuation
 sharesPre eqr = sum $ [commonPre, optionsPreOutstanding, optionsPrePromised, optionsPreFree] <*> [eqr]
 companyCapitalization' eqr = sharesPre eqr + conversionSharesAll' eqr
 companyCapitalization  eqr = sharesPre eqr + conversionSharesAll  eqr
