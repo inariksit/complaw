@@ -105,7 +105,7 @@ That means the function needs to have at least two arguments: the Series A pre-m
 #+begin_src haskell :noweb-ref basicimplementation
 
 dilutionDueTo :: Money -> Security -> Percentage
-dilutionDueTo valuationPre safe = money_in safe / effectiveValuation valuationPre safe
+dilutionDueTo valuationPre safe = safe.money_in / effectiveValuation valuationPre safe
 #+end_src
 
 Haskell is strongly typed. In this function, we use ~Money~ as the type of the valuation, and Percentage as the type of the result. Under the hood both are Floats. The type alias keeps them conceptually separated. 
@@ -122,7 +122,7 @@ Each SAFE converts at a certain /effective valuation/, which is based on, but us
 It all depends on which of the four variants the SAFE belongs to. We'll set up a ~case~ statement, aka a ~switch~ statement, to handle the four possibilities:
 
 #+begin_src haskell :noweb-ref basicimplementation :noexpand
-effectiveValuation valuationPre safe = case (discount safe, val_cap safe) of
+effectiveValuation valuationPre safe = case (safe.discount, safe.val_cap) of
 #+end_src
 
 If the SAFE is no-discount, no-cap, then the effective valuation is just the Series A pre-money valuation.
@@ -347,7 +347,7 @@ We already know it should be 15%, but let's reach that number in a bottom-up way
 #+begin_src haskell :noweb-ref basicimplementation
 conversionDilutions :: EquityRound -> Float
 conversionDilutions eqr =
-  sum $ dilutionDueTo (valuationPre eqr) <$> (convertibles (eqr :: EquityRound))
+  sum $ dilutionDueTo (eqr.valuationPre) <$> (convertibles (eqr :: EquityRound))
 #+end_src
 
 For sure, all of the above calculations could fit into a spreadsheet. Auto-generation of a spreadsheet is consistent with the goals of the Advanced Approach below.
@@ -363,7 +363,7 @@ A handful of other functions may be useful. ~conversionShares~ tells us how many
 #+begin_src haskell :noweb-ref basicimplementation
 conversionShares :: EquityRound -> Security -> Int
 conversionShares eqr safe
-  = floor(dilutionDueTo (valuationPre eqr) safe * fromIntegral ( companyCapitalization' eqr ))
+  = floor(dilutionDueTo (eqr.valuationPre) safe * fromIntegral ( companyCapitalization' eqr ))
 #+end_src
 
 **** New Money
@@ -1164,6 +1164,7 @@ The following blobs of code help with the tangle/noweb auto-generation of Haskel
 
 #+begin_src haskell :noweb yes :tangle safepost/test/Spec.hs
 {-# LANGUAGE OverloadedStrings, DuplicateRecordFields, QuasiQuotes #-}
+{-# OPTIONS_GHC -F -pgmF=record-dot-preprocessor #-}
 
 <<tangleWarning>>
 
@@ -1190,7 +1191,7 @@ spec1 = do
 
 #+begin_src haskell :noweb yes :tangle safepost/src/SAFE/Basic.hs
 {-# LANGUAGE OverloadedStrings, DuplicateRecordFields, QuasiQuotes #-}
-{-# LANGUAGE ExtendedDefaultRules #-}
+{-# OPTIONS_GHC -F -pgmF=record-dot-preprocessor #-}
 
 <<tangleWarning>>
 
