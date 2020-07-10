@@ -74,8 +74,3 @@ conversion(SeriesA,CompanyCapitalization,ConversionSharesAll) :-
   main :- test1(Convertibles, SeriesA), conversion(SeriesA,CC,NCSA).
 
   add(X,Y,Sum) :- Sum is X+Y.
-
-  %% equityRound(ValPre, NewMoneyIn, CommonPre, OptionsPre, OptionsPost,
-  %%             Convertibles, PricePerShare, SharesPost) :-
-  %%     InitialShares #= CommonPre + OptionsPre,
-  %%     ConversionShares #=

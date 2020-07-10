@@ -1,4 +1,4 @@
-(+TITLE: Learning Exercise: Post-Money SAFE
+#+TITLE: Learning Exercise: Post-Money SAFE
 
 * Background
 
@@ -607,11 +607,11 @@ But we will implement the operational logic using a constraint solver, because t
 The ~new_money_in~ is an upper bound. In practice the round may not fill, in which case the investors will get slightly more % of the company than they had originally negotiated; while the absolute size of your slice of the pie remains the same, because the pie itself is smaller, it's a greater portion, relatively speaking.
 
 
-*** Constraints
+*** Constraints: in Haskell didn't work
 
-We can phrase all of the above mathematics in the form of constraints.
+We can phrase all of the above mathematics in the form of constraints. Math.MFSolve lets us say:
 
-#+begin_src haskell :noweb-ref basicimplementation
+#+begin_src haskell :noweb-ref exclude
 asConstraints eqr =
   let aim :: Expr SimpleVar Float
       [ aim,  -- all investor money
@@ -642,6 +642,7 @@ asConstraints eqr =
 
 Solving this gets us most of the way; we need to minimize the final equation:
 
+#+begin_src text
 *Main Lib SAFE.Basic> asConstraints series_a
 csa = 1764705.0
 opf = 100000.0
@@ -654,8 +655,7 @@ aii = -1.1664705e7 + 0.9*tp
 onf = -100000.0 + 0.1*tp
 pps - 1.5e7/(1.1664705e7 + 0.1*tp) = 0
 -1.1664705e7 + 0.9*tp - 5000000.0/pps = 0
-
-
+#+end_src
 
 *** Constraints: Prolog / CLP(R) didn't work
 
@@ -1197,7 +1197,6 @@ spec1 = do
 module SAFE.Basic where
 import Data.Ratio
 import Data.Maybe
-import Math.MFSolve
 
 <<basictypes>>
 <<basicimplementation>>

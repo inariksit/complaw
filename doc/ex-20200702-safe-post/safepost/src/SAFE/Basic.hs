@@ -10,7 +10,6 @@
 module SAFE.Basic where
 import Data.Ratio
 import Data.Maybe
-import Math.MFSolve
 
 type Percentage = Float
 type      Money = Float
@@ -103,31 +102,5 @@ investorIssue  eqr investment = floor (money_in investment / pricePerShare  eqr)
 allInvestorIssues' :: EquityRound -> Int
 allInvestorIssues' eqr = sum $ investorIssue' eqr <$> incoming eqr
 allInvestorIssues  eqr = sum $ investorIssue  eqr <$> incoming eqr
-asConstraints eqr =
-  let aim :: Expr SimpleVar Float
-      [ aim,  -- all investor money
-        aii,  -- all investor issues
-        cc,   -- company capitalization
-        sp,   -- shares Pre conversion
-        csa,  -- conversion shares all
-        vp,   -- valuationPre
-        op,   -- optionsPost
-        onf,  -- optionsNewFree
-        opf,  -- optionsPreFree
-        tp,   -- totalPost
-        pps ] -- pricePerShare
-        = map (makeVariable . SimpleVar) (words "aim aii cc sp csa vp op onf opf tp pps")
-  in showVars $ flip execSolver noDeps $ do
-     aim === makeConstant (allInvestorMoney eqr)
-     aii === aim / pps
-     cc  === sp + csa
-     sp  === makeConstant (fromIntegral (sharesPre eqr))
-     csa === makeConstant (fromIntegral (conversionSharesAll eqr))
-     vp  === makeConstant (valuationPre eqr)
-     op  === makeConstant (optionsPost eqr)
-     onf === op * tp - opf
-     opf === makeConstant (fromIntegral (optionsPreFree eqr))
-     tp  === cc + aii + onf
-     pps === vp / (cc + onf)
 infixl 7 //
 (//) = flip fromMaybe
